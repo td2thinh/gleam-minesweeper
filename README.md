@@ -1,21 +1,6 @@
 # minesweeper
 
-[![Package Version](https://img.shields.io/hexpm/v/minesweeper)](https://hex.pm/packages/minesweeper)
-[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/minesweeper/)
-
-```sh
-gleam add minesweeper@1
-```
-
-```gleam
-import minesweeper
-
-pub fn main() -> Nil {
-  // TODO: An example of the project in use
-}
-```
-
-Further documentation can be found at <https://hexdocs.pm/minesweeper>.
+An attempt to remake Google's Minesweeper game in Gleam, built as a learning project to explore the language.
 
 ## Development
 
