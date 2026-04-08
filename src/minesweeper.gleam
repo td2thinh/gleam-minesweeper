@@ -54,15 +54,12 @@ pub fn print_board(game_state: GameState) -> String {
 }
 
 pub fn empty_board(size: Int) -> Board {
-  let indices =
-    int.range(0, size - 1, list.new(), fn(acc, x) { list.append(acc, [x]) })
-
   let tiles =
-    list.map(indices, fn(x) {
-      list.map(indices, fn(y) { #(Coord(x, y), Empty(1)) })
+    int.range(0, size, dict.new(), fn(acc, x) {
+      int.range(0, size, acc, fn(acc, y) {
+        dict.insert(acc, Coord(x, y), Empty(1))
+      })
     })
-    |> list.flatten
-    |> dict.from_list
 
   Board(size: size, tiles: tiles)
 }
