@@ -27,7 +27,7 @@ pub fn print_board(game_state: GameState) -> String {
   let GameState(board, revealed, _game_over) = game_state
   let Board(size, tiles) = board
   let indices =
-    int.range(0, size - 1, list.new(), fn(acc, x) { list.append(acc, [x]) })
+    int.range(0, size, list.new(), fn(acc, x) { list.append(acc, [x]) })
 
   // Header row: "  0 1 2 3 4"
   let header = "  " <> string.join(list.map(indices, int.to_string), " ")
