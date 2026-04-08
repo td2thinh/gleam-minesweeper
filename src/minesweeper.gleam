@@ -5,21 +5,21 @@ import gleam/list
 import gleam/set.{type Set}
 import gleam/string
 
-type Tile {
+pub type Tile {
   Bomb
   Empty(Int)
 }
 
-type Coord {
+pub type Coord {
   Coord(x: Int, y: Int)
 }
 
-type Board {
+pub type Board {
   // Assume the board is square for simplicity
   Board(size: Int, tiles: Dict(Coord, Tile))
 }
 
-type GameState {
+pub type GameState {
   GameState(board: Board, revealed: Set(Coord), game_over: Bool)
 }
 
