@@ -69,6 +69,38 @@ fn sample_bombs(
   }
 }
 
+// Check if a coordinate is valid
+fn valid_coord(size: Int, coord: Coord) -> Bool {
+  let Coord(x, y) = coord
+  x >= 0 && x < size && y >= 0 && y < size
+}
+
+// Get the valid neighbors of a tile
+pub fn neighbors(size: Int, coord: Coord) -> List(Coord) {
+  let Coord(x, y) = coord
+  // List of all possible direction offsets.
+  // (dx, dy)
+  [
+    #(-1, -1),
+    #(0, -1),
+    #(1, -1),
+    // middle row
+    #(-1, 0),
+    #(1, 0),
+    // bottom row
+    #(-1, 1),
+    #(0, 1),
+    #(1, 1),
+  ]
+  |> list.map(fn(offset) {
+    let #(dx, dy) = offset
+    Coord(x + dx, y + dy)
+  })
+  |> list.filter(valid_coord(size, _))
+}
+
+// Initialize a new board with random bombs.
+// (This is a pure function)
 pub fn init_board(size: Int, bombs: Int) -> Board {
   // Get random coordinates for bombs.
   let bomb_coords = sample_bombs(size, bombs, set.new())
