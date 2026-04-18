@@ -53,7 +53,7 @@ pub fn print_board(game_state: GameState) -> String {
   string.join([header, ..rows], "\n")
 }
 
-pub fn empty_board(size: Int) -> Board {
+pub fn init_board(size: Int, bombs: Int) -> Board {
   let tiles =
     int.range(0, size, dict.new(), fn(acc, x) {
       int.range(0, size, acc, fn(acc, y) {
@@ -66,7 +66,8 @@ pub fn empty_board(size: Int) -> Board {
 
 pub fn main() -> Nil {
   let size = 5
-  let board = empty_board(size)
+  let bombs = 5
+  let board = init_board(size, bombs)
 
   let game = GameState(board: board, revealed: set.new(), game_over: False)
   io.println(print_board(game))
