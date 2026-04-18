@@ -86,5 +86,3 @@ pub fn neighbors_size_one_test() {
   let result = minesweeper.neighbors(1, Coord(0, 0))
   assert result == []
 }
-
-}

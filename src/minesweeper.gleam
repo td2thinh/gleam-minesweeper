@@ -92,6 +92,47 @@ pub fn init_board(size: Int, bombs: Int) -> Board {
   Board(size: size, bombs: bomb_coords)
 }
 
+pub fn print_board(game_state: GameState) -> String {
+  let GameState(board, revealed, _game_over) = game_state
+  let size = board.size
+
+  // Header row: "  0 1 2 3 4"
+  let header =
+    int.range(from: 0, to: size, with: "  ", run: fn(acc, x) {
+      acc <> int.to_string(x) <> " "
+    })
+
+  // Each row: "y . . 1 * ..."
+  let rows =
+    int.range(from: 0, to: size, with: [], run: fn(acc, y) {
+      let row =
+        int.range(
+          from: 0,
+          to: size,
+          with: int.to_string(y) <> " ",
+          run: fn(acc, x) {
+            let coord = Coord(x, y)
+            let cell = case set.contains(revealed, coord) {
+              False -> "."
+              True ->
+                case tile_at(board, coord) {
+                  Bomb -> "*"
+                  Empty(0) -> " "
+                  Empty(n) -> int.to_string(n)
+                }
+            }
+            acc <> cell <> " "
+          },
+        )
+      [row, ..acc]
+    })
+
+  // Rows were prepended, so reverse to get top-to-bottom order
+  let rows = list.reverse(rows)
+
+  string.join([header, ..rows], "\n")
+}
+
 pub fn main() -> Nil {
   let size = 5
   let bombs = 5
