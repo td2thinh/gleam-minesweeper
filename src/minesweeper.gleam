@@ -53,11 +53,35 @@ pub fn print_board(game_state: GameState) -> String {
   string.join([header, ..rows], "\n")
 }
 
+// Generate random set of coords for bombs.
+// Recursively sample bombs until we have enough.
+fn sample_bombs(
+  size: Int,
+  remaining: Int,
+  acc: set.Set(Coord),
+) -> set.Set(Coord) {
+  case set.size(acc) >= remaining {
+    True -> acc
+    False -> {
+      let coord = Coord(int.random(size), int.random(size))
+      sample_bombs(size, remaining, set.insert(acc, coord))
+    }
+  }
+}
+
 pub fn init_board(size: Int, bombs: Int) -> Board {
+  // Get random coordinates for bombs.
+  let bomb_coords = sample_bombs(size, bombs, set.new())
+
+  // Initialize all tiles to empty.
+  // Then replace the bomb coordinates with bombs.
   let tiles =
     int.range(0, size, dict.new(), fn(acc, x) {
       int.range(0, size, acc, fn(acc, y) {
-        dict.insert(acc, Coord(x, y), Empty(1))
+        case set.contains(bomb_coords, Coord(x, y)) {
+          True -> dict.insert(acc, Coord(x, y), Bomb)
+          False -> dict.insert(acc, Coord(x, y), Empty(0))
+        }
       })
     })
 
