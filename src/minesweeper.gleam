@@ -16,41 +16,11 @@ pub type Coord {
 
 pub type Board {
   // Assume the board is square for simplicity
-  Board(size: Int, tiles: Dict(Coord, Tile))
+  Board(size: Int, bombs: Set(Coord))
 }
 
 pub type GameState {
   GameState(board: Board, revealed: Set(Coord), game_over: Bool)
-}
-
-pub fn print_board(game_state: GameState) -> String {
-  let GameState(board, revealed, _game_over) = game_state
-  let Board(size, tiles) = board
-  let indices =
-    int.range(0, size, list.new(), fn(acc, x) { list.append(acc, [x]) })
-
-  // Header row: "  0 1 2 3 4"
-  let header = "  " <> string.join(list.map(indices, int.to_string), " ")
-
-  // Each row: "y tile tile tile ..."
-  let rows =
-    list.map(indices, fn(y) {
-      let row =
-        list.map(indices, fn(x) {
-          case set.contains(revealed, Coord(x, y)) {
-            True ->
-              case dict.get(tiles, Coord(x, y)) {
-                Ok(Bomb) -> "*"
-                Ok(Empty(n)) -> int.to_string(n)
-                Error(_) -> "."
-              }
-            False -> "."
-          }
-        })
-      int.to_string(y) <> " " <> string.join(row, " ")
-    })
-
-  string.join([header, ..rows], "\n")
 }
 
 // Generate random set of coords for bombs.
@@ -99,25 +69,27 @@ pub fn neighbors(size: Int, coord: Coord) -> List(Coord) {
   |> list.filter(valid_coord(size, _))
 }
 
+pub fn count_bombs(coord: Coord, board: Board) -> Int {
+  let Board(size, bombs) = board
+  neighbors(size, coord)
+  |> list.filter(set.contains(bombs, _))
+  |> list.length()
+}
+
+pub fn tile_at(board: Board, coord: Coord) -> Tile {
+  case set.contains(board.bombs, coord) {
+    True -> Bomb
+    False -> Empty(count_bombs(coord, board))
+  }
+}
+
 // Initialize a new board with random bombs.
 // (This is a pure function)
 pub fn init_board(size: Int, bombs: Int) -> Board {
   // Get random coordinates for bombs.
   let bomb_coords = sample_bombs(size, bombs, set.new())
 
-  // Initialize all tiles to empty.
-  // Then replace the bomb coordinates with bombs.
-  let tiles =
-    int.range(0, size, dict.new(), fn(acc, x) {
-      int.range(0, size, acc, fn(acc, y) {
-        case set.contains(bomb_coords, Coord(x, y)) {
-          True -> dict.insert(acc, Coord(x, y), Bomb)
-          False -> dict.insert(acc, Coord(x, y), Empty(0))
-        }
-      })
-    })
-
-  Board(size: size, tiles: tiles)
+  Board(size: size, bombs: bomb_coords)
 }
 
 pub fn main() -> Nil {
